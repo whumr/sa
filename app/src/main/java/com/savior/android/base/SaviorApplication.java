@@ -1,4 +1,4 @@
-package com.en123.contribution.base;
+package com.savior.android.base;
 
 import android.app.Application;
 import android.content.Context;
@@ -12,7 +12,7 @@ import org.xutils.x;
 /**
  * Created by Administrator on 2016/1/5.
  */
-public class ContributionApplication extends Application {
+public class SaviorApplication extends Application {
     @Override
     public void onCreate() {
         super.onCreate();

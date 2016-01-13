@@ -1,4 +1,4 @@
-package com.en123.contribution;
+package com.savior.android;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -7,8 +7,8 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
-import com.en123.contribution.base.BaseActivity;
-import com.en123.contribution.main.MainActivity;
+import com.savior.android.base.BaseActivity;
+import com.savior.android.main.MainActivity;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -22,8 +22,8 @@ public class LoginActivity extends BaseActivity {
     private EditText name_txt, password_txt;
     private Button login_btn, reg_btn;
 
-    static String URL_LOGIN = "http://192.168.9.138:2016/api/accounts/login";
-    static String URL_REG = "http://192.168.9.138:2016/api/accounts/register";
+    static String URL_LOGIN = "http://192.168.9.99/account/login";
+    static String URL_REG = "http://192.168.9.99/account/reg";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

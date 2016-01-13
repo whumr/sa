@@ -5,7 +5,7 @@ android {
     buildToolsVersion "23.0.1"
 
     defaultConfig {
-        applicationId "com.en123.contribution"
+        applicationId "com.savior.android"
         minSdkVersion 14
         targetSdkVersion 16
         versionCode 1

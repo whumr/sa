@@ -1,15 +1,14 @@
-package com.en123.contribution.main;
+package com.savior.android.main;
 
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
-import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.en123.contribution.R;
-import com.en123.contribution.base.BaseFragment;
-import com.en123.contribution.base.BaseFragmentActivity;
+import com.savior.android.R;
+import com.savior.android.base.BaseFragment;
+import com.savior.android.base.BaseFragmentActivity;
 
 /**
  * Created by a352 on 16/1/6.

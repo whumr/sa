@@ -1,12 +1,12 @@
-package com.en123.contribution.main;
+package com.savior.android.main;
 
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import com.en123.contribution.R;
-import com.en123.contribution.base.BaseFragment;
+import com.savior.android.R;
+import com.savior.android.base.BaseFragment;
 
 /**
  * Created by a352 on 16/1/6.
