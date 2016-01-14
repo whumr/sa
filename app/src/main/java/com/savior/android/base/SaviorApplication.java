@@ -7,8 +7,6 @@ import com.nostra13.universalimageloader.core.ImageLoader;
 import com.nostra13.universalimageloader.core.ImageLoaderConfiguration;
 import com.nostra13.universalimageloader.core.assist.QueueProcessingType;
 
-import org.xutils.x;
-
 /**
  * Created by Administrator on 2016/1/5.
  */
@@ -16,7 +14,6 @@ public class SaviorApplication extends Application {
     @Override
     public void onCreate() {
         super.onCreate();
-        x.Ext.init(this);
         initImageLoader(getApplicationContext());
     }
 

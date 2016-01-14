@@ -7,15 +7,17 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
+import com.loopj.android.http.AsyncHttpClient;
+import com.loopj.android.http.JsonHttpResponseHandler;
+import com.loopj.android.http.RequestParams;
 import com.savior.android.base.BaseActivity;
 import com.savior.android.main.MainActivity;
+import com.savior.android.util.HttpUtil;
 
-import org.json.JSONException;
+import org.apache.http.Header;
 import org.json.JSONObject;
-import org.xutils.common.Callback;
-import org.xutils.ex.HttpException;
-import org.xutils.http.RequestParams;
-import org.xutils.x;
+
+import java.util.concurrent.TimeoutException;
 
 public class LoginActivity extends BaseActivity {
 
@@ -44,25 +46,17 @@ public class LoginActivity extends BaseActivity {
         login_btn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                RequestParams params = new RequestParams(URL_LOGIN);
-                params.addHeader("Content-Type", "application/json");
-                JSONObject data = new JSONObject();
-                try {
-                    data.put("mobile", name_txt.getText().toString());
-                    data.put("password", password_txt.getText().toString());
-                } catch (JSONException e) {
-                }
-                params.setBodyContent(data.toString());
-                params.setConnectTimeout(10 * 1000);
-                x.http().post(params, new Callback.CommonCallback<String>() {
-
+                RequestParams params = new RequestParams();
+                params.put("mobile", name_txt.getText().toString());
+                params.put("password", password_txt.getText().toString());
+                AsyncHttpClient client = HttpUtil.getClient();
+                client.post(URL_LOGIN, params, new JsonHttpResponseHandler() {
                     @Override
-                    public void onSuccess(String result) {
-                        log(result);
+                    public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
+                        log(response.toString());
                         try {
-                            JSONObject json = new JSONObject(result);
                             Intent intent = new Intent();
-                            intent.putExtra("token", json.getString("token"));
+                            intent.putExtra("token", response.getString("token"));
                             intent.setClass(LoginActivity.this, MainActivity.class);
                             startActivity(intent);
                         } catch (Exception e) {
@@ -70,22 +64,8 @@ public class LoginActivity extends BaseActivity {
                     }
 
                     @Override
-                    public void onError(Throwable ex, boolean isOnCallback) {
-                        if (ex instanceof HttpException) {
-                            HttpException he = (HttpException) ex;
-                            log(he.getCode() + ":" + he.getMessage());
-                        } else {
-                            ex.printStackTrace(System.out);
-                            log(ex.getLocalizedMessage());
-                        }
-                    }
-
-                    @Override
-                    public void onCancelled(CancelledException cex) {
-                    }
-
-                    @Override
-                    public void onFinished() {
+                    public void onFailure(int statusCode, Header[] headers, Throwable throwable, JSONObject errorResponse) {
+                        log(statusCode + ":连接超时");
                     }
                 });
             }
@@ -94,40 +74,19 @@ public class LoginActivity extends BaseActivity {
         reg_btn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                RequestParams params = new RequestParams(URL_REG);
-                params.addHeader("Content-Type", "application/json");
-                JSONObject data = new JSONObject();
-                try {
-                    data.put("mobile", name_txt.getText().toString());
-                    data.put("password", password_txt.getText().toString());
-                } catch (JSONException e) {
-                }
-                params.setBodyContent(data.toString());
-                params.setConnectTimeout(10 * 1000);
-                x.http().post(params, new Callback.CommonCallback<String>() {
-
+                RequestParams params = new RequestParams();
+                params.put("mobile", name_txt.getText().toString());
+                params.put("password", password_txt.getText().toString());
+                AsyncHttpClient client = HttpUtil.getClient();
+                client.post(URL_REG, params, new JsonHttpResponseHandler() {
                     @Override
-                    public void onSuccess(String result) {
-                        log(result.toString());
+                    public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
+                        log(response.toString());
                     }
 
                     @Override
-                    public void onError(Throwable ex, boolean isOnCallback) {
-                        if (ex instanceof HttpException) {
-                            HttpException he = (HttpException) ex;
-                            log(he.getCode() + ":" + he.getMessage());
-                        } else {
-                            ex.printStackTrace(System.out);
-                            log(ex.getLocalizedMessage());
-                        }
-                    }
-
-                    @Override
-                    public void onCancelled(CancelledException cex) {
-                    }
-
-                    @Override
-                    public void onFinished() {
+                    public void onFailure(int statusCode, Header[] headers, String responseString, Throwable throwable) {
+                        log(statusCode + ":" + responseString);
                     }
                 });
             }
