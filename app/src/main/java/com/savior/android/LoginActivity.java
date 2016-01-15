@@ -11,8 +11,13 @@ import com.loopj.android.http.AsyncHttpClient;
 import com.loopj.android.http.JsonHttpResponseHandler;
 import com.loopj.android.http.RequestParams;
 import com.savior.android.base.BaseActivity;
+import com.savior.android.entity.UserEntity;
+import com.savior.android.http.UserService;
+import com.savior.android.http.callback.DefaultCallback;
+import com.savior.android.http.callback.EntityCallback;
 import com.savior.android.main.MainActivity;
 import com.savior.android.util.HttpUtil;
+import com.savior.android.util.UserSession;
 
 import org.apache.http.Header;
 import org.json.JSONObject;
@@ -23,9 +28,6 @@ public class LoginActivity extends BaseActivity {
 
     private EditText name_txt, password_txt;
     private Button login_btn, reg_btn;
-
-    static String URL_LOGIN = "http://192.168.9.99/account/login";
-    static String URL_REG = "http://192.168.9.99/account/reg";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -46,26 +48,16 @@ public class LoginActivity extends BaseActivity {
         login_btn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                RequestParams params = new RequestParams();
-                params.put("mobile", name_txt.getText().toString());
-                params.put("password", password_txt.getText().toString());
-                AsyncHttpClient client = HttpUtil.getClient();
-                client.post(URL_LOGIN, params, new JsonHttpResponseHandler() {
+                UserService.login(name_txt.getText().toString(), password_txt.getText().toString(), new EntityCallback<UserEntity>() {
                     @Override
-                    public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
-                        log(response.toString());
-                        try {
-                            Intent intent = new Intent();
-                            intent.putExtra("token", response.getString("token"));
-                            intent.setClass(LoginActivity.this, MainActivity.class);
-                            startActivity(intent);
-                        } catch (Exception e) {
-                        }
+                    public void succeed(UserEntity user) {
+                        UserSession.getSession().login(LoginActivity.this, user);
+                        jumpToMain();
                     }
 
                     @Override
-                    public void onFailure(int statusCode, Header[] headers, Throwable throwable, JSONObject errorResponse) {
-                        log(statusCode + ":连接超时");
+                    public void fail(String error) {
+                        toastShort(error);
                     }
                 });
             }
@@ -74,27 +66,38 @@ public class LoginActivity extends BaseActivity {
         reg_btn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                RequestParams params = new RequestParams();
-                params.put("mobile", name_txt.getText().toString());
-                params.put("password", password_txt.getText().toString());
-                AsyncHttpClient client = HttpUtil.getClient();
-                client.post(URL_REG, params, new JsonHttpResponseHandler() {
+                UserService.reg(name_txt.getText().toString(), password_txt.getText().toString(), new EntityCallback<UserEntity>() {
                     @Override
-                    public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
-                        log(response.toString());
+                    public void succeed(UserEntity user) {
+                        toastShort(user.id + "");
                     }
 
                     @Override
-                    public void onFailure(int statusCode, Header[] headers, String responseString, Throwable throwable) {
-                        log(statusCode + ":" + responseString);
+                    public void fail(String error) {
+                        toastShort(error);
                     }
                 });
             }
         });
+        UserService.checkLogin(this, new EntityCallback<UserEntity>() {
+            @Override
+            public void succeed(UserEntity user) {
+                UserSession.getSession().setUser(user);
+                jumpToMain();
+            }
+
+            @Override
+            public void fail(String error) {
+                toastShort(error);
+            }
+        });
     }
 
-    private void log(String msg) {
-        Toast.makeText(this, msg, Toast.LENGTH_SHORT).show();
+    private void jumpToMain() {
+        Intent intent = new Intent();
+        intent.putExtra("token", UserSession.getSession().getUser().last_token);
+        intent.setClass(LoginActivity.this, MainActivity.class);
+        startActivity(intent);
     }
 }
 
